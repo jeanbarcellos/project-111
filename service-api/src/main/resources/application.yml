@@ -1,0 +1,58 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: project111-service-api
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5532}/${DB_NAME:project111}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
+      platform: postgresql
+
+  jpa:
+    hibernate:
+      ddl-auto: none # update, create-drop, none
+    show-sql: false
+    properties:
+      hibernate:
+        format-sql: false
+      jakarta:
+        persistence:
+          schema-generation:
+            scripts:
+              action: none # create
+              create-target: create-schema.sql
+              create-source: metadata
+
+  flyway:
+    enabled: true
+    default-schema: project111
+
+  jackson:
+    default-property-inclusion: non-null
+
+  mvc:
+    log-resolved-exception: false
+
+  main:
+    banner-mode: off
+
+springdoc:
+  swagger-ui:
+    path: /swagger
+    operationsSorter: alpha
+    tagsSorter: alpha
+
+
+app-config:
+  name: @project.name@
+  description: @project.description@
+  version: @project.version@
