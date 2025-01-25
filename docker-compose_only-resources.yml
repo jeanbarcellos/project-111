@@ -1,0 +1,27 @@
+version: "3.4"
+
+services:
+  database:
+    container_name: project111_database
+    image: postgres:14.5
+    restart: always
+    ports:
+      - 5532:5432
+    networks:
+      - project111_net
+    volumes:
+      - project111_database_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=project111
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+networks:
+  project111_net:
+    name: project111_net
+    driver: bridge
+
+volumes:
+  project111_database_data:
+    name: project111_database_data
+    driver: local
