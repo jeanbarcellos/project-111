@@ -13,14 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UrlExpiredCleanerScheduler {
 
-    private final UrlExpiredService service;
+    private final UrlExpiredService urlExpiredService;
 
     @Scheduled(cron = "0 0 0 * * ?") // Executa diariamente
     public void cleanExpiredUrls() {
-        log.info("removing all expired urls");
-
         // TODO estratégias de retry
 
-        this.service.deleteAllExpiredUrls();
+        this.urlExpiredService.deleteAllExpiredUrls();
     }
 }

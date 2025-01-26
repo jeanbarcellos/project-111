@@ -1,6 +1,5 @@
 package com.jeanbarcellos.project111.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -23,13 +22,15 @@ public class UrlExpiredService {
     public void deleteAllExpiredUrls() {
         var expiredUrls = this.getAllExpiredUrls();
 
+        log.info(String.format("Removing all expired urls: %s urls", expiredUrls.size()));
+
         this.urlRepository.deleteAll(expiredUrls);
     }
 
     private List<Url> getAllExpiredUrls() {
         return this.urlRepository.findAll()
-              .stream()
-              .filter(mapping -> mapping.getExpiresAt().isBefore(LocalDate.now()))
+                .stream()
+                .filter(Url::isExpired)
                 .toList();
     }
 }
