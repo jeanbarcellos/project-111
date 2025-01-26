@@ -30,9 +30,6 @@ import lombok.experimental.Accessors;
 @Table(schema = "project111", name = "url")
 public class Url {
 
-    // TODO Definir a nivel de serviço
-    public static final Integer TTL_DAYS = 30;
-
     @Id
     @Column(name = "hash", length = 6, nullable = false)
     private String hash;
@@ -50,12 +47,12 @@ public class Url {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "url_user_id_fk"))
     private User user;
 
-    public Url(User user, String hash, String targetUrl) {
+    public Url(User user, String hash, String targetUrl, Integer expireDays) {
         this.hash = hash;
         this.targetUrl = targetUrl;
         this.user = user;
         this.createdAt = LocalDateTime.now();
-        this.expiresAt = this.createdAt.toLocalDate().plusDays(TTL_DAYS);
+        this.expiresAt = this.createdAt.toLocalDate().plusDays(expireDays);
     }
 
     public boolean isExpired() {

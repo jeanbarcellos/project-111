@@ -28,6 +28,7 @@ public class UrlShortenerService {
     private static final String MSG_SHORTENED_URL_CREATED = "Shortened URL created: %s";
 
     private static final Integer HASH_LENGHT = 6;
+    private static final Integer EXPIRATION_IN_DAYS = 30;
 
     private final UserRepository userRepository;
 
@@ -49,20 +50,19 @@ public class UrlShortenerService {
     public UrlResponse createShortUrl(UrlRequest request) {
         this.validator.validate(request);
 
-        // obtem referência do usuario
         var user = this.userRepository.getReferenceById(request.getUserId());
 
-        // Gera o rash
-        String hash = this.generateHash();
+        String shortUrl = generateHashWithCollisionValidation();
 
-        var url = new Url(user, hash, request.getUrl());
+        var url = new Url(user, shortUrl, request.getUrl(), EXPIRATION_IN_DAYS);
 
-        urlRepository.save(url);
+        this.urlRepository.save(url);
 
-        log.info(String.format(MSG_SHORTENED_URL_CREATED, hash));
+        log.info(String.format(MSG_SHORTENED_URL_CREATED, shortUrl));
 
         return this.urlMapper.toResponse(url);
     }
+
 
     @Transactional
     public void deleteAll() {
@@ -72,6 +72,19 @@ public class UrlShortenerService {
     private Url findByIdOrThrow(String id) {
         return this.urlRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(MSG_ERROR_URL_NOT_FOUND, id)));
+    }
+
+    /**
+     * Gerara hash com validação de colisão.
+     *
+     * @return
+     */
+    private String generateHashWithCollisionValidation() {
+        String shortUrl;
+        do {
+            shortUrl = this.generateHash();
+        } while (this.urlRepository.existsById(shortUrl)); // Verifica colisão
+        return shortUrl;
     }
 
     /**
