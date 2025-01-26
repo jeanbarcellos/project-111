@@ -30,6 +30,7 @@ import lombok.experimental.Accessors;
 @Table(schema = "project111", name = "url")
 public class Url {
 
+    // TODO Definir a nivel de serviço
     public static final Integer TTL_DAYS = 30;
 
     @Id
@@ -55,5 +56,9 @@ public class Url {
         this.user = user;
         this.createdAt = LocalDateTime.now();
         this.expiresAt = this.createdAt.toLocalDate().plusDays(TTL_DAYS);
+    }
+
+    public boolean isExpired() {
+        return this.expiresAt.isBefore(LocalDate.now());
     }
 }
