@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jeanbarcellos.project111.dto.UrlRequest;
 import com.jeanbarcellos.project111.dto.UrlResponse;
-import com.jeanbarcellos.project111.service.UrlService;
+import com.jeanbarcellos.project111.service.UrlShortenerService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,10 +21,10 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/urls")
-@Tag(name = "URLs", description = "Manage URLs")
-public class UrlController {
+@Tag(name = "URL Shortener", description = "Shortener URLs")
+public class UrlShortenerController {
 
-    private final UrlService urlService;
+    private final UrlShortenerService urlService;
 
     @GetMapping
     @Operation(summary = "Get all URLs")

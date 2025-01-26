@@ -30,7 +30,7 @@ import lombok.experimental.Accessors;
 @Table(schema = "project111", name = "url")
 public class Url {
 
-    public static final Integer TTL = 30;
+    public static final Integer TTL_DAYS = 30;
 
     @Id
     @Column(name = "hash", length = 6, nullable = false)
@@ -54,6 +54,6 @@ public class Url {
         this.targetUrl = targetUrl;
         this.user = user;
         this.createdAt = LocalDateTime.now();
-        this.expiresAt = this.createdAt.toLocalDate().plusDays(TTL);
+        this.expiresAt = this.createdAt.toLocalDate().plusDays(TTL_DAYS);
     }
 }

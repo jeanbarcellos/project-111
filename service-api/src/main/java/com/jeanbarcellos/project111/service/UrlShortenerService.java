@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UrlService {
+public class UrlShortenerService {
 
     public static final String MSG_ERROR_URL_NOT_FOUND = "There is no user for the ID '%s' provided.";
 
@@ -45,24 +45,28 @@ public class UrlService {
     public UrlResponse createShortUrl(UrlRequest request) {
         this.validator.validate(request);
 
+        // obtem referência do usuario
         var user = this.userRepository.getReferenceById(request.getUserId());
 
-        String hash = generateHash();
+        // Gera o rash
+        String hash = this.generateHash();
 
         var url = new Url(user, hash, request.getUrl());
 
-        url = urlRepository.save(url);
+        urlRepository.save(url);
 
         return this.urlMapper.toResponse(url);
-    }
-
-    private String generateHash() {
-        return UUID.randomUUID().toString().substring(0, 6);
     }
 
     private Url findByIdOrThrow(String id) {
         return this.urlRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(MSG_ERROR_URL_NOT_FOUND, id)));
     }
+
+    // Gera um identificador único de 6 caracteres
+    private String generateHash() {
+        return UUID.randomUUID().toString().substring(0, 6);
+    }
+
 
 }
