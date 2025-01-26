@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project111.scheduled;
+package com.jeanbarcellos.project111.scheduler;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,10 @@ public class UrlExpiredCleanerScheduler {
 
     @Scheduled(cron = "0 0 0 * * ?") // Executa diariamente
     public void cleanExpiredUrls() {
+
         // TODO estratégias de retry
+
+        log.info("Scheduled Job: Delete expired URLs");
 
         this.urlExpiredService.deleteAllExpiredUrls();
     }

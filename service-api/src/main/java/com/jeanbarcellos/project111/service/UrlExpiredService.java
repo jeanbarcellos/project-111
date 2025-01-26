@@ -19,12 +19,14 @@ public class UrlExpiredService {
     private final UrlRepository urlRepository;
 
     @Transactional
-    public void deleteAllExpiredUrls() {
+    public Integer deleteAllExpiredUrls() {
         var expiredUrls = this.getAllExpiredUrls();
 
         log.info(String.format("Removing all expired urls: %s urls", expiredUrls.size()));
 
         this.urlRepository.deleteAll(expiredUrls);
+
+        return expiredUrls.size();
     }
 
     private List<Url> getAllExpiredUrls() {
