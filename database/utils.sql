@@ -1,3 +1,6 @@
+-- Apagar tudo
+DELETE FROM project111.url;
+
 -- Exibir tudo
 SELECT * FROM project111.url;
 

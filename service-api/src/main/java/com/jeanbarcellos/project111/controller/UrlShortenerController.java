@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/urls/shorten")
+@RequestMapping("/api/v1/urls/shortener")
 @Tag(name = "URL Shortener", description = "Shortener URLs")
 public class UrlShortenerController {
 
