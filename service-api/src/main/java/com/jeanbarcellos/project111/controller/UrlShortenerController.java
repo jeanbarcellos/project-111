@@ -3,6 +3,7 @@ package com.jeanbarcellos.project111.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/urls")
+@RequestMapping("/api/v1/urls/shorten")
 @Tag(name = "URL Shortener", description = "Shortener URLs")
 public class UrlShortenerController {
 
@@ -42,6 +43,13 @@ public class UrlShortenerController {
     @Operation(summary = "Create Short URL")
     public ResponseEntity<UrlResponse> createShortUrl(@RequestBody UrlRequest request) {
         return ResponseEntity.ok(this.urlService.createShortUrl(request));
+    }
+
+    @DeleteMapping
+    @Operation(summary = "Delete all URLs")
+    public ResponseEntity<?> deleteAll() {
+        this.urlService.deleteAll();
+        return ResponseEntity.noContent().build();
     }
 
 }

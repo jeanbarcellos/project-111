@@ -1,6 +1,7 @@
 package com.jeanbarcellos.project111.service;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -23,7 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UrlShortenerService {
 
-    public static final String MSG_ERROR_URL_NOT_FOUND = "There is no user for the ID '%s' provided.";
+    private static final String MSG_ERROR_URL_NOT_FOUND = "There is no user for the ID '%s' provided.";
+    private static final String MSG_SHORTENED_URL_CREATED = "Shortened URL created: %s";
+
+    private static final Integer HASH_LENGHT = 6;
 
     private final UserRepository userRepository;
 
@@ -55,7 +59,14 @@ public class UrlShortenerService {
 
         urlRepository.save(url);
 
+        log.info(String.format(MSG_SHORTENED_URL_CREATED, hash));
+
         return this.urlMapper.toResponse(url);
+    }
+
+    @Transactional
+    public void deleteAll() {
+        this.urlRepository.deleteAll();
     }
 
     private Url findByIdOrThrow(String id) {
@@ -63,10 +74,31 @@ public class UrlShortenerService {
                 .orElseThrow(() -> new NotFoundException(String.format(MSG_ERROR_URL_NOT_FOUND, id)));
     }
 
-    // Gera um identificador único de 6 caracteres
-    private String generateHash() {
-        return UUID.randomUUID().toString().substring(0, 6);
+    /**
+     * Gerar Hash - Operação 1
+     *
+     * Usando UUID e truncando para os primeiros 6 caracteres.
+     *
+     * Embora não seja 100% seguro, é improvável que haja colisão para volumes
+     * moderados.
+     *
+     * @return String Hash
+     */
+    protected String generateHash() {
+        return UUID.randomUUID().toString()
+                .replace("-", "")
+                .substring(0, HASH_LENGHT);
     }
 
+    protected String generateHash2() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder shortUrl = new StringBuilder();
+
+        for (int i = 0; i < HASH_LENGHT; i++) {
+            shortUrl.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return shortUrl.toString();
+    }
 
 }
