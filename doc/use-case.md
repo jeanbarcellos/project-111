@@ -18,7 +18,30 @@ https://app.diagrams.net/#G1moVOywIG3WcR3NyUkUbzs8YEQPT3m5dG#%7B%22pageId%22%3A%
 - Links não podem ser advinhavel
 - Redirecionamento tem que ser em tempo real e no minimo de latencia possivel
 
+## Cenários de evolução
+
+- **Cenário 1**
+  - **10** novas URLs por minuto
+  - Ratio de leitura e escrita de **50:1**
+  - Tráfego em **500** RPM
+- **Cenário 2**
+  - **100** novas URLs por minuto (RPM)
+  - Ratio de leitura e escrita de **50:1**
+  - Tráfego em **5.000** RPM
+- **Cenário 3**
+  - **100** novas URLs por minuto
+  - Ratio de leitura e escrita de **500:1**
+  - Tráfego em **50.000** RPM
+- **Cenário 4**
+  - **1000** novas URLs por minuto (RPM)
+  - Ratio de leitura e escrita de **500:1**
+  - Tráfego em **500.000** RPM
+
 ## Amazenamento estimado
+
+Calculo de armazenamento
+
+### Schema
 
 ```sql
 CREATE SCHEMA IF NOT EXISTS "project111";

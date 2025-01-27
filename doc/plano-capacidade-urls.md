@@ -1,21 +1,40 @@
 # **Plano de Capacidade (Apenas Tabela `url`)**
 
+## Cenários de evolução
+
+- **Cenário 1**
+  - **10** novas URLs por minuto
+  - Ratio de leitura e escrita de **50:1**
+  - Tráfego em **500** RPM
+- **Cenário 2**
+  - **100** novas URLs por minuto (RPM)
+  - Ratio de leitura e escrita de **50:1**
+  - Tráfego em **5.000** RPM
+- **Cenário 3**
+  - **100** novas URLs por minuto
+  - Ratio de leitura e escrita de **500:1**
+  - Tráfego em **50.000** RPM
+- **Cenário 4**
+  - **1000** novas URLs por minuto (RPM)
+  - Ratio de leitura e escrita de **500:1**
+  - Tráfego em **500.000** RPM
+
 ---
 
-## **1. Tamanho estimado por linha (row) da tabela `url`**
+## **1) Tamanho estimado por linha (row) da tabela `url`**
 
 ### **Tabela `url`**
 
 | Coluna       | Tipo          | Tamanho estimado (bytes)        |
 | ------------ | ------------- | ------------------------------- |
 | `hash`       | VARCHAR(6)    | 6                               |
-| `target_url` | VARCHAR(2083) | 2083 (tamanho médio de uma URL) |
+| `target_url` | VARCHAR(2083) | 2048 (tamanho médio de uma URL) |
 | `created_at` | TIMESTAMP(6)  | 8                               |
 | `expires_at` | DATE          | 4                               |
 | `user_id`    | UUID          | 16                              |
 
 - **Total sem índices**:
-  6 + 2083 + 8 + 4 + 16 = 2117 bytes
+  6 + 2048 + 8 + 4 + 16 = 2082 bytes
 
 - **Índices**:
 
@@ -23,219 +42,119 @@
   - Índice estrangeiro em `user_id`: 16 bytes
 
 - **Tamanho total por linha**:
-  2117 + 6 + 16 = **2139 bytes** ou **2,139 Bb**
+  2082 + 6 + 16 = **2104 bytes** ou **2,104 Bb**
 
 ---
 
-## **2. Planejamento de Capacidade (Tabela `url`)**
+## **2) Espaço necessário para armazenamento (Tabela `url`)**
+
+### **Premissas**
+
+1. **Escrita por minuto**:
+
+   - Cenário 1: 10 novas URLs/minuto
+   - Cenário 2: 100 novas URLs/minuto
+   - Cenário 3: 100 novas URLs/minuto
+   - Cenário 4: 1000 novas URLs/minuto
+
+2. **Cálculos de armazenamento diário, anual e em 5 anos**:
+   - **Tamanho de escrita por linha**:
+     2.104 bytes.
+   - **Linhas escritas por dia**:
+     Escritas/minuto \* 1.440 minutos/dia.
+   - **Armazenamento anual**:
+     Escritas/dia \* 365.
+   - **Armazenamento em 5 anos**:
+     Escritas/ano \* 5.
 
 ### **Cenário 1:**
 
 - **10 URLs/minuto**
-- URLs criadas por dia:
+
+- **URLs criadas por dia**:
   10 URLs \* 60 minutos \* 24 horas = **14.400 URLs/Dia**
 
-- **Armazenamento diário**:
-  14.400 \* 2139 butes = 30.801.600 bytes (~30.801 KB ou **~30.8 MB**)
+- **Escritas por dia**:
+  10 \* 1440 = 14,400 linhas/dia
+  14,400 \* 2104 = 30,297,600 bytes/dia ~ **28.9 MB/dia**.
 
 - **Armazenamento anual**:
-  30.8 \* 365 = 11.2 GB
+  30,297,600 \* 365 = 11,049,600,000 bytes/ano ~ **10.3 GB/ano**.
 
 - **Armazenamento em 5 anos**:
-  11.2 \* 5 = 56 GB
+  11,049,600,000 \* 5 = 55,248,000,000 bytes ~ **51.7 GB/5 anos**.
 
 ---
 
 ### **Cenário 2:**
 
 - **100 URLs/minuto**
-- URLs criadas por dia:
-  100 \* 60 \* 24 = 144,000
 
-- **Armazenamento diário**:
-  144,000 \* 2139 = 307,200,000 bytes (~307.2 MB)
+- **URLs criadas por dia**:
+  100 \* 60 \* 24 = **144,000 URLs/Dia**
+
+- **Escritas por dia**:
+  100 \* 1440 = 144,000 linhas/dia
+  144,000 \* 2104 = 302,976,000 bytes/dia ~ **289 MB/dia**.
 
 - **Armazenamento anual**:
-  307.2 \* 365 = 112 GB
-
+  302,976,000 \* 365 = 110,496,000,000 bytes/ano ~ **102.9 GB/ano**.
 - **Armazenamento em 5 anos**:
-  112 \* 5 = 560 GB
+  110,496,000,000 \* 5 = 552,480,000,000 bytes ~ **514.7 GB/5 anos**.
 
 ---
 
 ### **Cenário 3:**
 
-- **100 URLs/minuto**
-- **Leitura/Escrita Ratio**: 500:1
-- URLs criadas por dia:
-  100 \* 60 \* 24 = 144,000
+Mesmo número de escritas por minuto que o **Cenário 2**, então os valores serão os mesmos:
 
-- **Armazenamento diário**:
-  144,000 \* 2139 = 307,200,000 bytes (~307.2 MB)
-
-- **Armazenamento anual**:
-  307.2 \* 365 = 112 GB
-
-- **Armazenamento em 5 anos**:
-  112 \* 5 = 560 GB
+- **289 MB/dia**, **102.9 GB/ano**, **514.7 GB/5 anos**.
 
 ---
 
 ### **Cenário 4:**
 
 - **1000 URLs/minuto**
-- **Leitura/Escrita Ratio**: 500:1
-- URLs criadas por dia:
-  1000 \* 60 \* 24 = 1,440,000
 
-- **Armazenamento diário**:
-  1,440,000 \* 2139 = 3,072,000,000 bytes (~3.1 GB)
+- **Leitura/Escrita Ratio**: 500:1
+
+- URLs criadas por dia:
+  1000 \* 60 \* 24 = **1,440,000 URLs/Dia**
+
+- **Escritas por dia**:
+  1000 \* 1440 = 1,440,000 linhas/dia
+  1,440,000 \* 2104 = 3,029,760,000 bytes/dia ~ **2.82 GB/dia**.
 
 - **Armazenamento anual**:
-  3.1 \* 365 = 1.12 TB
+  3,029,760,000 \* 365 = 1,104,960,000,000 bytes/ano ~ **1.03 TB/ano**.
 
 - **Armazenamento em 5 anos**:
-  1.12 \* 5 = 5.6 TB
+  1,104,960,000,000 \* 5 = 5,524,800,000,000 bytes ~ **5.17 TB/5 anos**.
 
 ---
 
-## **2.1 Cache**
+## **3) Armazenamento em cache**
 
-- **80% das URLs serão utilizadas**
-- TTL do cache: **24 horas**
-- Tamanho estimado por URL no cache: 2089 bytes
+**Premissas**:
 
-### **Cenário 1:**
+- 80% das URLs lidas serão armazenadas em cache.
+- TTL do cache: 24 horas.
+- Cada leitura: 2089 bytes.
 
-- URLs no cache por dia:
-  14,400 \* 0.8 = 11,520
+### Cálculo para cada cenário:
 
-- **Armazenamento no cache (24h)**:
-  11,520 \* 2089 = 24,046,080 bytes (~24 MB)
+- **Leituras por minuto**: Tráfego RPM \* 80\%.
+- **Cache diário**:
+  Leituras por minuto \* 2089 bytes \* 1440.
 
----
+| Cenário | Leituras RPM | Leituras no Cache RPM | Cache Diário (GB) |
+| ------- | ------------ | --------------------- | ----------------- |
+| 1       | 500          | 400                   | 1.1               |
+| 2       | 5000         | 4000                  | 11.2              |
+| 3       | 50000        | 40000                 | 120.1             |
+| 4       | 500000       | 400000                | 1120.6            |
 
-### **Cenário 2:**
-
-- URLs no cache por dia:
-  144,000 \* 0.8 = 115,200
-
-- **Armazenamento no cache (24h)**:
-  115,200 \* 2089 = 240,460,800 bytes (~240 MB)
-
----
-
-### **Cenário 3:**
-
-- URLs no cache por dia:
-  144,000 \* 0.8 = 115,200
-
-- **Armazenamento no cache (24h)**:
-  115,200 \* 2089 = 240,460,800 bytes (~240 MB)
-
----
-
-### **Cenário 4:**
-
-- URLs no cache por dia:
-  1,440,000 \* 0.8 = 1,152,000
-
-- **Armazenamento no cache (24h)**:
-  1,152,000 \* 2089 = 2,404,608,000 bytes (~2.4 GB)
-
----
-
-## **2.2 Largura de Banda (Bandwidth)**
-
-### **Cálculo**
-
-- Cada leitura envolve: 2089 bytes (hash + target URL)
-- Cada escrita envolve: 2139 bytes (linha completa)
-
----
-
-### **Cenário 1:**
-
-- Leituras por dia:
-  14,400 \* 50 = 720,000
-
-- **Leituras (diárias)**:
-  720,000 \* 2089 = 1,504,080,000 bytes (~1.5 GB)
-
-- **Escritas (diárias)**:
-  14,400 \* 2139 = 30,801,600 bytes (~30.8 MB)
-
-- **Total diário**:
-  1.5 \* 1024 = 1.53 GB
-
----
-
-### **Cenário 2:**
-
-- Leituras por dia:
-  144,000 \* 50 = 7,200,000
-
-- **Leituras (diárias)**:
-  7,200,000 \* 2089 = 15,040,800,000 bytes (~15 GB)
-
-- **Escritas (diárias)**:
-  144,000 \* 2139 = 307,200,000 bytes (~307.2 MB)
-
-- **Total diário**:
-  15.3 GB
-
----
-
-### **Cenário 3:**
-
-- Leituras por dia:
-  144,000 \* 500 = 72,000,000
-
-- **Leituras (diárias)**:
-  72,000,000 \* 2089 = 150,408,000,000 bytes (~150.4 GB)
-
-- **Escritas (diárias)**:
-  144,000 \* 2139 = 307,200,000 bytes (~307.2 MB)
-
-- **Total diário**:
-  150.7 GB
-
----
-
-### **Cenário 4:**
-
-- Leituras por dia:
-  1,440,000 \* 500 = 720,000,000
-
-- **Leituras (diárias)**:
-  720,000,000 \* 2089 = 1,504,080,000,000 bytes (~1.5 TB)
-
-- **Escritas (diárias)**:
-  1,440,000 \* 2139 = 3,072,000,000 bytes (~3.1 GB)
-
-- **Total diário**:
-  1.503 TB
-
-## **Resumo Final do Plano de Capacidade**
-
-| **Cenário** | **URLs/minuto** | **Leitura:Escrita** | **Armazenamento Diário** | **Armazenamento Anual** | **Armazenamento 5 Anos** | **Cache Diário** | **Largura de Banda (Diário)** |
-| ----------- | --------------- | ------------------- | ------------------------ | ----------------------- | ------------------------ | ---------------- | ----------------------------- |
-| **1**       | 10              | 50:1                | 30.8 MB                  | 11.2 GB                 | 56 GB                    | ~24 MB           | ~1.53 GB                      |
-| **2**       | 100             | 50:1                | 307.2 MB                 | 112 GB                  | 560 GB                   | ~240 MB          | ~15.3 GB                      |
-| **3**       | 100             | 500:1               | 307.2 MB                 | 112 GB                  | 560 GB                   | ~240 MB          | ~150.7 GB                     |
-| **4**       | 1000            | 500:1               | 3.1 GB                   | 1.12 TB                 | 5.6 TB                   | ~2.4 GB          | ~1.5 TB                       |
-
----
-
-## **Legenda**
-
-- **URLs/minuto**: Taxa de novas URLs geradas por minuto.
-- **Leitura:Escrita**: Proporção de leituras e escritas na aplicação.
-- **Armazenamento Diário**: Quantidade de espaço necessário para armazenar os dados em um dia.
-- **Armazenamento Anual**: Espaço estimado para armazenar os dados durante 1 ano.
-- **Armazenamento 5 Anos**: Espaço estimado para armazenar os dados durante 5 anos.
-- **Cache Diário**: Espaço necessário no cache para armazenar 80% das URLs usadas diariamente.
-- **Largura de Banda (Diário)**: Quantidade de dados trafegados por dia entre leitura e escrita.
+## **4) Largura de banda (Bandwidth)**
 
 ## Anexo
 
