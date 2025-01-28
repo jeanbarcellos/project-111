@@ -20,10 +20,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none # update, create-drop, none
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format-sql: false
+        format-sql: true
         use-sql-comments: true
       jakarta:
         persistence:

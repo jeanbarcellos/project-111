@@ -68,3 +68,14 @@ CREATE TABLE project111.url (
 ALTER TABLE IF EXISTS project111.url
     ADD CONSTRAINT url_user_id_fk FOREIGN KEY (user_id) REFERENCES project111.user;
 ```
+
+### Redirecionamentos
+
+Há duas opções básicas de redirecionamento em HTTP:
+
+- **Status code 301** – indicando que o recurso endereçado pela URL solicitada foi movido permanentemente para um novo endereço;
+- **Status code 302** – indicado que o recurso endereçado pela URL solicitada foi movido temporariamente para um novo endereço
+
+Retornar 301 é, de longe, a forma mais econômica de implementar o redirecionamento, afinal, evitará que os servidores do serviço sejam acionados desnecessariamente, uma vez que o browser cliente deverá promover o redirecionamento sozinho.
+
+Retornar 302, por outro lado, não diminui a quantidade de acionamentos, mas habilita fazer tracking de acesso e gerar estatísticas (algo desnecessário, conforme o negócio)
