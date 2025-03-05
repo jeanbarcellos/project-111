@@ -1,6 +1,8 @@
 package com.jeanbarcellos.core.exception;
 
 /**
+ * Domain Exception
+ *
  * @author Jean Silva de Barcellos (jeanbarcellos@hotmail.com)
  */
 public class DomainException extends ApplicationException {

@@ -1,41 +1,44 @@
 package com.jeanbarcellos.core.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.jeanbarcellos.core.exception.ApplicationException;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Classe utilitária para manipulação de JSON
+ * JSON Utils
  *
- * @author Jean Silva de Barcellos
+ * @author Jean Silva de Barcellos (jeanbarcellos@hotmail.com)
  */
 @Slf4j
 public class JsonUtils {
 
-    private static final String ERROR = "Erro nanipulação do JSON/Objeto";
-    public static final String JSON_LIST_PREFIX = "[";
+    private static final String ERROR_SERRIALIZE = "Erro serializar Objeto para JSON";
+    private static final String ERROR_DESERRIALIZE = "Erro ao desserializar do JSON para Objeto";
 
     private JsonUtils() {
     }
 
     private static ObjectMapper getObjectMapper() {
-        var objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
+        var mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        return mapper;
     }
 
     public static String toJson(Object obj) {
         try {
             return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException(ERROR, e);
+            log.error(e.getMessage());
+            throw new ApplicationException(ERROR_SERRIALIZE, e);
         }
     }
 
@@ -43,13 +46,8 @@ public class JsonUtils {
         try {
             return getObjectMapper().readValue(json, valueType);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException(ERROR, e);
+            log.error(e.getMessage());
+            throw new ApplicationException(ERROR_DESERRIALIZE, e);
         }
     }
-
-    public static boolean checkIsCollection(String str) {
-        return str.trim().startsWith(JsonUtils.JSON_LIST_PREFIX);
-    }
-
 }

@@ -14,8 +14,6 @@ import jakarta.validation.Validation;
  * Validator Service
  *
  * @author Jean Silva de Barcellos (jeanbarcellos@hotmail.com)
- *
- * @see https://github.com/jeanbarcellos/project-106/blob/master/src/main/java/com/jeanbarcellos/core/validation/Validator.java
  */
 public class Validator {
 

@@ -2,6 +2,8 @@ package com.jeanbarcellos.core.dto;
 
 import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -16,18 +18,16 @@ import lombok.Getter;
 @Getter
 public class ErrorResponse {
 
-    @Schema(name = "status", description = "Status Code")
-    private Integer status;
-
     @Schema(name = "message", description = "Mensagem")
-    private String message;
+    private final String message;
 
     @Schema(description = "Detalhes do erro")
     @JsonInclude(Include.NON_NULL)
-    private List<String> errors;
+    private final List<String> errors;
 
     public ErrorResponse(String message) {
         this.message = message;
+        this.errors = null;
     }
 
     public ErrorResponse(String message, List<String> errors) {
@@ -36,7 +36,7 @@ public class ErrorResponse {
     }
 
     public boolean hasErros() {
-        return !this.errors.isEmpty();
+        return ObjectUtils.isNotEmpty(this.errors);
     }
 
     public static ErrorResponse of(String message) {

@@ -1,6 +1,8 @@
 package com.jeanbarcellos.core.exception;
 
 /**
+ * Application Exception
+ *
  * @author Jean Silva de Barcellos (jeanbarcellos@hotmail.com)
  */
 public class ApplicationException extends RuntimeException {
