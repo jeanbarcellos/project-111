@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JsonUtils {
 
-    private static final String ERROR_SERRIALIZE = "Erro serializar Objeto para JSON";
-    private static final String ERROR_DESERRIALIZE = "Erro ao desserializar do JSON para Objeto";
+    private static final String ERROR_SERIALIZE = "Erro serializar Objeto para JSON";
+    private static final String ERROR_DESERIALIZE = "Erro ao desserializar do JSON para Objeto";
 
     private JsonUtils() {
     }
@@ -38,7 +38,7 @@ public class JsonUtils {
             return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new ApplicationException(ERROR_SERRIALIZE, e);
+            throw new ApplicationException(ERROR_SERIALIZE, e);
         }
     }
 
@@ -47,7 +47,7 @@ public class JsonUtils {
             return getObjectMapper().readValue(json, valueType);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new ApplicationException(ERROR_DESERRIALIZE, e);
+            throw new ApplicationException(ERROR_DESERIALIZE, e);
         }
     }
 }
